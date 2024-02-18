@@ -4,100 +4,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Parameter
-from torch.nn import MultiheadAttention
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from utils import rotate_batch
-from RetNet.src.xpos_relative_position import XPOS
 import numpy as np
 
 import copy
-
-
-class NodeAttnMap(nn.Module):
-    def __init__(self, in_features, nhid, use_mask=False):
-        super(NodeAttnMap, self).__init__()
-        self.use_mask = use_mask
-        self.out_features = nhid
-        self.W = nn.Parameter(torch.empty(size=(in_features, nhid)))
-        nn.init.xavier_uniform_(self.W.data, gain=1.414)
-        self.a = nn.Parameter(torch.empty(size=(2 * nhid, 1)))
-        nn.init.xavier_uniform_(self.a.data, gain=1.414)
-        self.leakyrelu = nn.LeakyReLU(0.2)
-
-    def forward(self, X, A):
-        Wh = torch.mm(X, self.W)
-
-        e = self._prepare_attentional_mechanism_input(Wh)
-
-        if self.use_mask:
-            e = torch.where(A > 0, e, torch.zeros_like(e))  # mask
-
-        A = A + 1  # shift from 0-1 to 1-2
-        e = e * A
-
-        return e
-
-    def _prepare_attentional_mechanism_input(self, Wh):
-        Wh1 = torch.matmul(Wh, self.a[:self.out_features, :])
-        Wh2 = torch.matmul(Wh, self.a[self.out_features:, :])
-        e = Wh1 + Wh2.T
-        return self.leakyrelu(e)
-
-
-class GraphConvolution(nn.Module):
-    def __init__(self, in_features, out_features, bias=True):
-        super(GraphConvolution, self).__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.weight = Parameter(torch.FloatTensor(in_features, out_features))
-        if bias:
-            self.bias = Parameter(torch.FloatTensor(out_features))
-        else:
-            self.register_parameter('bias', None)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.weight.size(1))
-        self.weight.data.uniform_(-stdv, stdv)
-        if self.bias is not None:
-            self.bias.data.uniform_(-stdv, stdv)
-
-    def forward(self, input, adj):
-        support = torch.mm(input, self.weight)
-        output = torch.spmm(adj, support)
-        if self.bias is not None:
-            return output + self.bias
-        else:
-            return output
-
-    def __repr__(self):
-        return self.__class__.__name__ + ' (' \
-               + str(self.in_features) + ' -> ' \
-               + str(self.out_features) + ')'
-
-
-class GCN(nn.Module):
-    def __init__(self, ninput, nhid, noutput, dropout):
-        super(GCN, self).__init__()
-
-        self.gcn = nn.ModuleList()
-        self.dropout = dropout
-        self.leaky_relu = nn.LeakyReLU(0.2)
-
-        channels = [ninput] + nhid + [noutput]
-        for i in range(len(channels) - 1):
-            gcn_layer = GraphConvolution(channels[i], channels[i + 1])
-            self.gcn.append(gcn_layer)
-
-    def forward(self, x, adj):
-        for i in range(len(self.gcn) - 1):
-            x = self.leaky_relu(self.gcn[i](x, adj))
-
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = self.gcn[-1](x, adj)
-
-        return x
-
 
 class UserEmbeddings(nn.Module):
     def __init__(self, num_users, embedding_dim):
@@ -296,20 +207,29 @@ class TransformerModel(nn.Module):
         super(TransformerModel, self).__init__()
         from torch.nn import TransformerEncoder, TransformerEncoderLayer
         from torch.nn import TransformerDecoder,TransformerDecoderLayer
+        user_time_dim = int(0.5*(args.user_embed_dim+args.poi_embed_dim))
+        
         self.pos_encoder1 = RightPositionalEncoding(args.user_embed_dim+args.poi_embed_dim, dropout)
-        self.pos_encoder2 = RightPositionalEncoding(args.poi_embed_dim,dropout)
+        self.pos_encoder2 = RightPositionalEncoding(args.poi_embed_dim+args.gps_embed_dim,dropout)
+        #self.pos_encoder = RightPositionalEncoding(args.user_embed_dim+args.poi_embed_dim+args.gps_embed_dim+user_time_dim,dropout)
 
-        encoder_layers1 = TransformerEncoderLayer(args.user_embed_dim+args.poi_embed_dim, nhead, nhid//2, dropout,batch_first=True)
+        encoder_layers1 = TransformerEncoderLayer(args.user_embed_dim+args.poi_embed_dim, nhead, nhid, dropout,batch_first=True)
         self.transformer_encoder1 = TransformerEncoder(encoder_layers1, nlayers)
         
-        encoder_layers2 = TransformerEncoderLayer(args.poi_embed_dim, nhead, nhid//2, dropout,batch_first=True)
+        encoder_layers2 = TransformerEncoderLayer(args.poi_embed_dim+args.gps_embed_dim, nhead, nhid, dropout,batch_first=True)
         self.transformer_encoder2 = TransformerEncoder(encoder_layers2, nlayers)
-        user_time_dim = int(0.5*(args.user_embed_dim+args.poi_embed_dim))
+        
+        
+        """ encoder_layers = TransformerEncoderLayer(args.user_embed_dim+args.poi_embed_dim+args.gps_embed_dim+user_time_dim, nhead, nhid, dropout,batch_first=True)
+        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers) """
+        
         
         self.args = args
         
         self.decoder_poi1 = nn.Linear(args.user_embed_dim+2*args.poi_embed_dim, num_poi)
-        self.decoder_poi2 = nn.Linear(args.poi_embed_dim+args.gps_embed_dim, num_poi)
+        self.decoder_poi2 = nn.Linear(args.poi_embed_dim+2*args.gps_embed_dim, num_poi)
+        
+        #self.decoder_poi = nn.Linear(args.user_embed_dim+args.poi_embed_dim+args.gps_embed_dim+2*user_time_dim,num_poi)
         
 
         self.init_weights()
@@ -334,9 +254,9 @@ class TransformerModel(nn.Module):
         self.decoder_poi1.weight.data.uniform_(-initrange, initrange)
         self.decoder_poi2.bias.data.zero_()
         self.decoder_poi2.weight.data.uniform_(-initrange, initrange)
-    # target_poi : (b,s,d)
-    # neg_poi : (b,s,k,d)
-    # src1 : (b,s,d)
+        """ self.decoder_poi.bias.data.zero_()
+        self.decoder_poi.weight.data.uniform_(-initrange, initrange) """
+
     def forward(self, src1,src2, src_mask,target_hour,target_day,poi_embeds,gps_embeds):
         
         src1 = src1 * math.sqrt(self.args.user_embed_dim+self.args.poi_embed_dim)
@@ -344,27 +264,28 @@ class TransformerModel(nn.Module):
         src1 = self.transformer_encoder1(src1,src_mask)
         
         user_time_dim = int(0.5*(self.args.user_embed_dim+self.args.poi_embed_dim))
-
-        #src1_hour = rotate_batch(src1,target_hour[:,:,:user_time_dim],user_time_dim,self.args.device)
-        #src1_day = rotate_batch(src1,target_day[:,:,:user_time_dim],user_time_dim,self.args.device)
-        #src1_hour = torch.cat((src1,target_hour[:,:,:user_time_dim]),dim=-1)
-        #src1_day = torch.cat((src1,target_day[:,:,:user_time_dim]),dim=-1)
         
-        #src1 = 0.7*src1_hour + 0.3*src1_day
+        src1_hour = rotate_batch(src1,target_hour[:,:,:user_time_dim],user_time_dim,self.args.device)
+        src1_day = rotate_batch(src1,target_day[:,:,:user_time_dim],user_time_dim,self.args.device)
+        
+        """ src1_hour = torch.cat((src1,target_hour[:,:,:user_time_dim]),dim=-1)
+        src1_day = torch.cat((src1,target_day[:,:,:user_time_dim]),dim=-1) """
+        
+        src1 = 0.7*src1_hour + 0.3*src1_day
         src1 = torch.cat((src1,poi_embeds),dim=-1)
         
         out_poi_prob1 = self.decoder_poi1(src1)
         
-        src2 = src2 * math.sqrt(self.args.poi_embed_dim)
+        src2 = src2 * math.sqrt(self.args.poi_embed_dim+self.args.gps_embed_dim)
         src2 = self.pos_encoder2(src2)
         src2 = self.transformer_encoder2(src2,src_mask)
         
-        #src2_hour = rotate_batch(src2,target_hour[:,:,user_time_dim:],64,self.args.device)
-        #src2_day = rotate_batch(src2,target_day[:,:,user_time_dim:],64,self.args.device)
-        #src2_hour = torch.cat((src2,target_hour[:,:,user_time_dim:]),dim=-1)
-        #src2_day = torch.cat((src2,target_day[:,:,user_time_dim:]),dim=-1)
+        src2_hour = rotate_batch(src2,target_hour[:,:,user_time_dim:],2*self.args.time_embed_dim,self.args.device)
+        src2_day = rotate_batch(src2,target_day[:,:,user_time_dim:],2*self.args.time_embed_dim,self.args.device)
+        """ src2_hour = torch.cat((src2,target_hour[:,:,user_time_dim:]),dim=-1)
+        src2_day = torch.cat((src2,target_day[:,:,user_time_dim:]),dim=-1) """
         
-        #src2 = 0.7*src2_hour + 0.3*src2_day
+        src2 = 0.7*src2_hour + 0.3*src2_day
         src2 = torch.cat((src2,gps_embeds),dim=-1)
         
         out_poi_prob2 = self.decoder_poi2(src2)

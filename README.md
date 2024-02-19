@@ -9,7 +9,7 @@ Create dataset folder and download three datasets from [Datasets](https://github
 
 ## Pre-trained Graph
 
-Download pre-trained graphs from [models](https://github.com/ruiwenfan/ROTAN)and move them to KG/models
+Download pre-trained graphs from [models](https://github.com/ruiwenfan/ROTAN) and move them to KG/models
 
 ## Train
 

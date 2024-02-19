@@ -3,6 +3,10 @@ The implementation code of ROTAN.
 
 KG's implementation refers to RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space.
 
+## Environment
+
+`conda env create -f environment.yml`
+
 ## Dataset 
 
 Create dataset folder and download three datasets from [Datasets](https://github.com/ruiwenfan/ROTAN)

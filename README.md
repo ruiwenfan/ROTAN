@@ -9,11 +9,11 @@ KG's implementation refers to RotatE: Knowledge Graph Embedding by Relational Ro
 
 ## Dataset 
 
-Create dataset folder and download three datasets from [Datasets](https://github.com/ruiwenfan/ROTAN)
+Download three datasets from [Datasets](https://drive.google.com/drive/folders/1xsML0LIhTaF5x0rXmqwLsmwCKabFb-D5?usp=sharing) and move them to dataset/ .
 
 ## Pre-trained Graph
 
-Download pre-trained graphs from [models](https://github.com/ruiwenfan/ROTAN) and move them to KG/models
+Download pre-trained graphs from [Models](https://drive.google.com/drive/folders/1qVKTWVWL9qr8-yY7EKv3ZPk2YcEArEC5?usp=sharing) and move them to KG/models .
 
 ## Train
 

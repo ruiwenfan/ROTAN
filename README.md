@@ -9,7 +9,7 @@ Download three datasets from [Datasets](https://drive.google.com/drive/folders/1
 
 ## Pre-trained Graph
 
-Download pre-trained graphs from [models](https://drive.google.com/drive/folders/1qVKTWVWL9qr8-yY7EKv3ZPk2YcEArEC5?usp=sharing) and move them to KG/models .
+Download pre-trained graphs from [Models](https://drive.google.com/drive/folders/1qVKTWVWL9qr8-yY7EKv3ZPk2YcEArEC5?usp=sharing) and move them to KG/models .
 
 ## Train
 

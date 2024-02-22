@@ -5,11 +5,26 @@ KG's implementation refers to RotatE: Knowledge Graph Embedding by Relational Ro
 
 ## Environment
 
-`conda env create -f environment.yml`
+Firstly, create virtual environment by conda ：
+
+`conda create -n rotan python=3.9.17`
+
+Secondly, install [pytorch](https://pytorch.org/get-started/previous-versions/):
+
+`pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116`
+
+Finally, install other dependencies :
+
+`pip install -r requirements.txt`
+
+## Hardware
+
+GPU memory should be greater than or equal to 24GB.
 
 ## Dataset 
+I obtained the compressed file in a Windows environment. If there is a problem when decompressing, it is recommended that you download and decompress the file in a Windows environment and use the csv file.
 
-Download three datasets from [Datasets](https://drive.google.com/drive/folders/1xsML0LIhTaF5x0rXmqwLsmwCKabFb-D5?usp=sharing) and create NYC, TKY and CA folder in dataset/ . Then, move three datasets to specified folder.(For example, move NYC_train.csv and NYC_val.csv to dataset/NYC).
+Download three datasets from [Datasets](https://drive.google.com/drive/folders/1xsML0LIhTaF5x0rXmqwLsmwCKabFb-D5?usp=sharing)and create NYC, TKY and CA folder in dataset/ . Then, move three datasets to specified folder.(For example, move NYC_train.csv and NYC_val.csv to dataset/NYC).
 
 ## Pre-trained Graph
 

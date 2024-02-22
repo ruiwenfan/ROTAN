@@ -19,7 +19,7 @@ Finally, install other dependencies :
 
 ## Hardware
 
-GPU memory should be greater than or equal to 24GB.
+GPU memory should be greater than or equal to 24576 MB.
 
 ## Dataset 
 I obtained the compressed file in a Windows environment. If there is a problem when decompressing, it is recommended that you download and decompress the file in a Windows environment and use the csv file.

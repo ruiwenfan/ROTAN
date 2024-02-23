@@ -24,7 +24,7 @@ GPU memory should be greater than or equal to 24576 MB.
 ## Dataset 
 I obtained the compressed file in a Windows environment. If there is a problem when decompressing, it is recommended that you download and decompress the file in a Windows environment and use the csv file.
 
-Download three datasets from [Datasets](https://drive.google.com/drive/folders/1xsML0LIhTaF5x0rXmqwLsmwCKabFb-D5?usp=sharing)and create NYC, TKY and CA folder in dataset/ . Then, move three datasets to specified folder.(For example, move NYC_train.csv and NYC_val.csv to dataset/NYC).
+Download three datasets from [Datasets](https://drive.google.com/drive/folders/1xsML0LIhTaF5x0rXmqwLsmwCKabFb-D5?usp=sharing) and create NYC, TKY and CA folder in dataset/ . Then, move three datasets to specified folder.(For example, move NYC_train.csv and NYC_val.csv to dataset/NYC).
 
 ## Pre-trained Graph
 

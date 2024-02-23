@@ -78,19 +78,7 @@ def parameter_parser():
                         help='The traj_id of trajectory')
     parser.add_argument('--poi-entity',
                         type=str,
-                        default='KG/data/NYC/poi_qua/entities.dict',
-                        help='The traj_id of trajectory')
-    parser.add_argument('--user-pre-embedding',
-                        type=str,
-                        default='KG/models/RotatE_NYC_mini_user/entity_embedding.npy',
-                        help='The traj_id of trajectory')
-    parser.add_argument('--user-time-pre-embedding',
-                        type=str,
-                        default='KG/models/RotatE_NYC_mini_user/relation_embedding.npy',
-                        help='The traj_id of trajectory')
-    parser.add_argument('--user-entity',
-                        type=str,
-                        default='KG/data/NYC_mini/user/entities.dict',
+                        default='KG/data/NYC/entities.dict',
                         help='The traj_id of trajectory')
 
 

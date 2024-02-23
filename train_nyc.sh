@@ -6,7 +6,7 @@ python old_train.py --data-train dataset/NYC/NYC_train.csv \
                 --time-embed-dim 64 --cat-embed-dim 128 \
                 --node-attn-nhid 128     \
                 --transformer-nhid 1024 \
-                --device cuda:3 \
+                --device cuda:1 \
                 --neg-num 80 --lr 1e-3 --warmup-lr-init 1e-4 \
                 --transformer-nlayers 4 --transformer-nhead 2 \
                 --batch 128 --epochs 60 --name exp1 --weight_decay 8e-4

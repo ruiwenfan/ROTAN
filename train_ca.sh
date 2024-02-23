@@ -6,10 +6,7 @@ python old_train.py --data-train dataset/CA/CA_train.csv \
                 --time-embed-dim 64 --cat-embed-dim 128 \
                 --poi-pre-embedding KG/models/qua_RotatE_CA_time2vec_norm/entity_embedding.npy \
                 --time-pre-embedding KG/models/qua_RotatE_CA_time2vec_norm/relation_embedding.npy \
-                --poi-entity KG/data/CA/poi_qua/entities.dict \
-                --user-pre-embedding KG/models/RotatE_TKY_mini_1_user/entity_embedding.npy \
-                --user-time-pre-embedding KG/models/RotatE_TKY_mini_1_user/relation_embedding.npy \
-                --user-entity KG/data/TKY_mini1/user/entities.dict \
+                --poi-entity KG/data/CA/entities.dict \
                 --node-attn-nhid 128 \
                 --traj-feature trajectory_id \
                 --device cuda:1 \

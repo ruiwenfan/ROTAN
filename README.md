@@ -5,7 +5,7 @@ KG's implementation refers to RotatE: Knowledge Graph Embedding by Relational Ro
 
 ## Rebuttal 
 
-The rebuttal_doc folder contains our answers to reviewers' questions. We hope these responses help you better understand our paper.
+The rebuttal_docs folder contains our answers to reviewers' questions. We hope these responses help you better understand our paper.
 
 ## Environment
 

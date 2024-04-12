@@ -10,7 +10,7 @@ This folder contains our answers to reviewers' questions. We hope these response
 
 Here are seven files: R1.pdf - R6.pdf represent responses to respective reviewers, while the Response-all.pdf summarizes all responses.
 
-Response to all reviwers: https://anonymous.4open.science/r/ROTAN-B729/rebuttal_docs/
+Response to all reviwers: https://anonymous.4open.science/r/ROTAN-B729/rebuttal_docs/Response-all.pdf
 
 Response to Reviewer UXgD: https://anonymous.4open.science/r/ROTAN-B729/rebuttal_docs/R1-Reviewer-UXgD.pdf
 

@@ -3,9 +3,6 @@ The implementation code of ROTAN.
 
 KG's implementation refers to RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space.
 
-## Rebuttal 
-
-The rebuttal_docs folder contains our answers to reviewers' questions. We hope these responses help you better understand our paper.
 
 ## Environment
 
